@@ -1,112 +1,84 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, TextInput } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import React, { useEffect, useState } from 'react';
+import { View, Text, ScrollView, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import axios from 'axios';
 
-const HomeScreen = () => {
-    const navigation = useNavigation();
-    const [data, setData] = useState([]);
-    const [filteredData, setFilteredData] = useState([]);
-    const [searchText, setSearchText] = useState('');
+const HomeScreen = ({ navigation }) => {  
+  const [news, setNews] = useState([]);
+  const [apod, setApod] = useState(null);
 
-    useEffect(() => {
-        fetchData("https://randomuser.me/api/?results=20");
-    }, []);
+  useEffect(() => {
+    axios.get(`https://api.nasa.gov/planetary/apod?api_key=S3i1iFitAIMjtribxDs7KcMysu8rREtm2NXeCN3Q`)
+      .then(response => setApod(response.data));
 
-    const fetchData = async (url) => {
-        try {
-            const response = await fetch(url);
-            const json = await response.json();
-            setData(json.results);        // Set data from API response
-            setFilteredData(json.results); // Set the initial filtered data as the full dataset 
-        } catch (error) {
-            console.error(error);
-        }
-    };
+    axios.get(`https://api.nasa.gov/planetary/earth/assets?api_key=S3i1iFitAIMjtribxDs7KcMysu8rREtm2NXeCN3Q`)
+      .then(response => setNews(response.data));
+  }, []);
 
-    // Filter the data based on search input
-    const searchFilterFunction = (text) => {
-        setSearchText(text);
-        if (text) {
-            const newData = data.filter((item) => {
-                const itemData = (item.name.first + " " + item.name.last).toUpperCase();
-                const textData = text.toUpperCase();
-                return itemData.indexOf(textData) > -1; // Filters by both first and last name
-            });
-            setFilteredData(newData);
-        } else {
-            // Reset to the original data if no search text
-            setFilteredData(data);
-        }
-    };
+  return (
+    <ScrollView style={styles.container}>
+      {apod && (
+        <View>
+          <Text style={styles.title}>Astronomy Picture of the Day</Text>
+          <Image source={{ uri: apod.url }} style={styles.image} />
+          <Text>{apod.explanation}</Text>
+        </View>
+      )}
 
-    return (
-        <ScrollView>
-            <Text style={styles.textFriends}>Friends</Text>
+      <Text style={styles.title}>Latest Astronomy News</Text>
+      {news.length > 0 ? (
+        news.map((item, index) => (
+          <View key={index}>
+            <Text>{item.title}</Text>
+          </View>
+        ))
+      ) : (
+        <Text>No news available.</Text>
+      )}
 
-            <TextInput
-                style={styles.searchInput}
-                placeholder="Search Friends"
-                value={searchText}
-                onChangeText={searchFilterFunction} // Trigger filter on text change
-            />
+      {/* Add buttons to navigate to the other screens */}
+      <View style={styles.navButtons}>
+        <TouchableOpacity onPress={() => navigation.navigate('CelestialBodies')}>
+          <Text style={styles.button}>Go to Celestial Bodies</Text>
+        </TouchableOpacity>
 
-            {filteredData.length > 0 ? (
-                filteredData.map((item, index) => (
-                    <View key={index} style={styles.itemContainer}>
-                        <Image source={{ uri: item.picture.large }} style={styles.image} />
-                        <View>
-                            <Text style={styles.textName}>
-                                {item.name.first} {item.name.last}
-                            </Text>
-                            <Text style={styles.textEmail}>{item.login.username}</Text>
-                        </View>
-                    </View>
-                ))
-            ) : (
-                <Text>No results found.</Text>
-            )}
-        </ScrollView>
-    );
+        <TouchableOpacity onPress={() => navigation.navigate('SpaceMissions')}>
+          <Text style={styles.button}>Go to Space Missions</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => navigation.navigate('Search')}>
+          <Text style={styles.button}>Go to Search</Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
+  );
 };
 
-export default HomeScreen;
-
 const styles = StyleSheet.create({
-    textFriends: {
-        fontSize: 20,
-        textAlign: "left",
-        marginLeft: 10,
-        fontWeight: "bold",
-        marginTop: 10,
-    },
-    searchInput: {
-        height: 40,
-        borderColor: '#ccc',
-        borderWidth: 1,
-        margin: 10,
-        paddingLeft: 10,
-        borderRadius: 5,
-        fontSize: 16,
-    },
-    itemContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        marginLeft: 10,
-        marginTop: 10,
-    },
-    image: {
-        width: 50,
-        height: 50,
-        borderRadius: 25,
-    },
-    textName: {
-        fontSize: 17,
-        marginLeft: 10,
-        fontWeight: "600",
-    },
-    textEmail: {
-        fontSize: 14,
-        marginLeft: 10,
-        color: "grey",
-    },
+  container: {
+    flex: 1,
+    padding: 10,
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginVertical: 10,
+  },
+  image: {
+    width: '100%',
+    height: 200,
+    marginVertical: 10,
+  },
+  navButtons: {
+    marginTop: 20,
+  },
+  button: {
+    backgroundColor: '#007bff',
+    color: 'white',
+    padding: 10,
+    marginVertical: 5,
+    textAlign: 'center',
+    borderRadius: 5,
+  }
 });
+
+export default HomeScreen;
