@@ -16,37 +16,39 @@ const HomeScreen = ({ navigation }) => {
 
   return (
     <ScrollView style={styles.container}>
+      {/* Astronomy Picture of the Day */}
       {apod && (
-        <View>
+        <View style={styles.card}>
           <Text style={styles.title}>Astronomy Picture of the Day</Text>
           <Image source={{ uri: apod.url }} style={styles.image} />
-          <Text>{apod.explanation}</Text>
+          <Text style={styles.description}>{apod.explanation}</Text>
         </View>
       )}
 
-      <Text style={styles.title}>Latest Astronomy News</Text>
+      {/* Latest Astronomy News */}
+      <Text style={styles.newsTitle}>Latest Astronomy News</Text>
       {news.length > 0 ? (
         news.map((item, index) => (
-          <View key={index}>
-            <Text>{item.title}</Text>
+          <View key={index} style={styles.newsItem}>
+            <Text style={styles.newsText}>{item.title}</Text>
           </View>
         ))
       ) : (
-        <Text>No news available.</Text>
+        <Text style={styles.noNews}>No news available.</Text>
       )}
 
-      {/* Add buttons to navigate to the other screens */}
+      {/* Navigation Buttons */}
       <View style={styles.navButtons}>
-        <TouchableOpacity onPress={() => navigation.navigate('CelestialBodies')}>
-          <Text style={styles.button}>Go to Celestial Bodies</Text>
+        <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('CelestialBodies')}>
+          <Text style={styles.buttonText}>Go to Celestial Bodies</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => navigation.navigate('SpaceMissions')}>
-          <Text style={styles.button}>Go to Space Missions</Text>
+        <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('SpaceMissions')}>
+          <Text style={styles.buttonText}>Go to Space Missions</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => navigation.navigate('Search')}>
-          <Text style={styles.button}>Go to Search</Text>
+        <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('Search')}>
+          <Text style={styles.buttonText}>Go to Search</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -56,29 +58,70 @@ const HomeScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
+    padding: 20,
+    backgroundColor: '#f8f9fa',
   },
   title: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: 'bold',
-    marginVertical: 10,
+    color: '#333',
+    marginBottom: 10,
   },
   image: {
     width: '100%',
-    height: 200,
-    marginVertical: 10,
+    height: 220,
+    borderRadius: 10,
+    marginBottom: 15,
+  },
+  description: {
+    fontSize: 16,
+    color: '#555',
+    lineHeight: 22,
+  },
+  newsTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#333',
+    marginVertical: 15,
+  },
+  newsItem: {
+    backgroundColor: '#ffffff',
+    padding: 15,
+    borderRadius: 8,
+    marginBottom: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 3,
+  },
+  newsText: {
+    fontSize: 16,
+    color: '#007bff',
+  },
+  noNews: {
+    fontSize: 16,
+    color: '#888',
+    textAlign: 'center',
+    marginTop: 10,
   },
   navButtons: {
     marginTop: 20,
   },
-  button: {
+  navButton: {
     backgroundColor: '#007bff',
-    color: 'white',
-    padding: 10,
-    marginVertical: 5,
-    textAlign: 'center',
-    borderRadius: 5,
-  }
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 25,
+    marginVertical: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
 });
 
 export default HomeScreen;

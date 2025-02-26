@@ -8,7 +8,7 @@ const CelestialBodiesScreen = () => {
 
   useEffect(() => {
 
-    axios.get('https://api.nasa.gov/planetary/apod?api_key=YOUR_API_KEY')
+    axios.get('https://api.nasa.gov/planetary/apod?api_key=dhQcUd8uY5FQUnxtBui4ZchNKlzRLsYPgBhaLPmn')
       .then(response => {
         setBodies(response.data);
       })
